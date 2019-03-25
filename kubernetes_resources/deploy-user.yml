@@ -1,0 +1,33 @@
+---
+# Role allowing for full access in example-namespace namespace
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: service-account-role
+  namespace: example-namespace
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["batch"]
+  resources:
+  - jobs
+  - cronjobs
+  verbs: ["*"]
+
+---
+# Link the Role and the account together
+# kubectl create rolebinding service-account-role --clusterrole=service-account-role --user=service-account@PROJECTHERE.iam.gserviceaccount.com -n example-namespace
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: service-account-role
+  namespace: example-namespace
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: service-account-role
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: service-account@PROJECTHERE.iam.gserviceaccount.com
